@@ -59,7 +59,7 @@ def genres_afficher(order_by, id_genre_sel):
                 # Différencier les messages si la table est vide.
                 if not data_ecran and id_ecran_sel == 0:
                     flash("""La table "t_ecran" est vide. !!""", "warning")
-                elif not data_genres and id_genre_sel > 0:
+                elif not data_ecran and id_ecran_sel > 0:
                     # Si l'utilisateur change l'id_ecran dans l'URL et que le genre n'existe pas,
                     flash(f"L'écran demandé n'existe pas !!", "warning")
                 else:
@@ -73,7 +73,7 @@ def genres_afficher(order_by, id_genre_sel):
                                           f"{Exception_genres_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("genres/genres_afficher.html", data=data_genres)
+    return render_template("genres/genres_afficher.html", data=data_ecran)
 
 
 """
