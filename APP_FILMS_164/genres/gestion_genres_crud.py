@@ -23,8 +23,8 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
     Test : ex : http://127.0.0.1:5005/genres_afficher
     
     Paramètres : order_by : ASC : Ascendant, DESC : Descendant
-                id_genre_sel = 0 >> tous les écrans.
-                id_genre_sel = "n" affiche l'écran dont l'id est "n"
+                id_genre_sel = 0 >> tous les genres.
+                id_genre_sel = "n" affiche le genre dont l'id est "n"
 """
 
 
@@ -34,38 +34,38 @@ def genres_afficher(order_by, id_genre_sel):
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_ecran_afficher = """SELECT id_ecran, designation_ecran FROM t_ecran"""
-                    mc_afficher.execute(strsql_ecran_afficher)
+                    strsql_genres_afficher = """SELECT * from t_ecran"""
+                    mc_afficher.execute(strsql_genres_afficher)
                 elif order_by == "ASC":
                     "SELECT * FROM t_ecran"
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
-                    # la commande MySql classique est "SELECT * FROM t_ecran"
+                    # la commande MySql classique est "SELECT * FROM t_xxxxx"
                     # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_ecran_afficher = """SELECT id_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre_selected)s"""
+                    strsql_genres_afficher = """SELECT id_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre_selected)s"""
 
-                    mc_afficher.execute(strsql_ecran_afficher, valeur_id_genre_selected_dictionnaire)
+                    mc_afficher.execute(strsql_genres_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_ecran_afficher = """SELECT id_ecran, designation_ecran FROM t_ecran"""
+                    strsql_genres_afficher = """SELECT id_ecran"""
 
-                    mc_afficher.execute(strsql_ecran_afficher)
+                    mc_afficher.execute(strsql_genres_afficher)
 
-                data_ecran = mc_afficher.fetchall()
+                data_genres = mc_afficher.fetchall()
 
-                print("data_ecrans ", data_ecran, " Type : ", type(data_ecran))
+                print("data_ecrans ", data_genres, " Type : ", type(data_genres))
 
                 # Différencier les messages si la table est vide.
-                if not data_ecran and id_ecran_sel == 0:
+                if not data_genres and id_genre_sel == 0:
                     flash("""La table "t_ecran" est vide. !!""", "warning")
-                elif not data_ecran and id_ecran_sel > 0:
+                elif not data_genres and id_genre_sel > 0:
                     # Si l'utilisateur change l'id_ecran dans l'URL et que le genre n'existe pas,
-                    flash(f"L'écran demandé n'existe pas !!", "warning")
+                    flash(f"Le genre demandé n'existe pas !!", "warning")
                 else:
                     # Dans tous les autres cas, c'est que la table "t_ecran" est vide.
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
-                    flash(f"Données écran affichées !!", "success")
+                    flash(f"Données genres affichés !!", "success")
 
         except Exception as Exception_genres_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
@@ -73,7 +73,7 @@ def genres_afficher(order_by, id_genre_sel):
                                           f"{Exception_genres_afficher}")
 
     # Envoie la page "HTML" au serveur.
-    return render_template("genres/genres_afficher.html", data=data_ecran)
+    return render_template("genres/genres_afficher.html", data=data_genres)
 
 
 """
