@@ -34,8 +34,8 @@ def genres_afficher(order_by, id_genre_sel):
         try:
             with DBconnection() as mc_afficher:
                 if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_genres_afficher = """SELECT * from t_ecran"""
-                    mc_afficher.execute(strsql_genres_afficher)
+                    strsql_ecran_afficher = """SELECT * from t_ecran"""
+                    mc_afficher.execute(strsql_ecran_afficher)
                 elif order_by == "ASC":
                     "SELECT * FROM t_ecran"
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
@@ -44,13 +44,13 @@ def genres_afficher(order_by, id_genre_sel):
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
                     valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_genres_afficher = """SELECT id_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre_selected)s"""
+                    strsql_ecran_afficher = """SELECT id_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre_selected)s"""
 
-                    mc_afficher.execute(strsql_genres_afficher, valeur_id_genre_selected_dictionnaire)
+                    mc_afficher.execute(strsql_ecran_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_genres_afficher = """SELECT id_ecran"""
+                    strsql_ecran_afficher = """SELECT id_ecran"""
 
-                    mc_afficher.execute(strsql_genres_afficher)
+                    mc_afficher.execute(strsql_ecran_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
@@ -104,12 +104,12 @@ def genres_ajouter_wtf():
             if form.validate_on_submit():
                 name_genre_wtf = form.nom_genre_wtf.data
                 name_genre = name_genre_wtf.lower()
-                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
+                valeurs_insertion_dictionnaire = {"designation_ecran": name_genre}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_genre = """INSERT INTO t_ecran (id_ecran,designation_ecran) VALUES (NULL,%(value_intitule_genre)s) """
+                strsql_insert_ecran = """INSERT INTO t_ecran (id_ecran,designation_ecran) VALUES (NULL,%(designation_ecran)s) """
                 with DBconnection() as mconn_bd:
-                    mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
+                    mconn_bd.execute(strsql_insert_ecran, valeurs_insertion_dictionnaire)
 
                 flash(f"Données insérées !!", "success")
                 print(f"Données insérées !!")
