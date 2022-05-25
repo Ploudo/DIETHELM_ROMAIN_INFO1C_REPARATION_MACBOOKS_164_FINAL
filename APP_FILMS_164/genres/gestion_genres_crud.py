@@ -1,6 +1,6 @@
 """Gestion des "routes" FLASK et des données pour les genres.
 Fichier : gestion_genres_crud.py
-Auteur : OM 2021.03.16
+Auteur : OM 2021.03.22
 """
 from pathlib import Path
 
