@@ -28,6 +28,14 @@ class MonPremierWTForm(FlaskForm):
                                                                                   "de double apostrophe, "
                                                                                   "de double trait union")
                                                                    ])
+    prix_ajouter_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    prix_ajouter_wtf = StringField("Truc secondaire jsplus ", validators=[Length(min=2, max=20, message="min 2 max 20"),
+                                                                   Regexp(prix_ajouter_regexp,
+                                                                          message="Pas de chiffres, de caractères "
+                                                                                  "spéciaux, d'espace à double, "
+                                                                                  "de double apostrophe, "
+                                                                                  "de double trait union")
+                                                                   ])
 
     case_cocher_npc = BooleanField('Ne pas cliquer')
 

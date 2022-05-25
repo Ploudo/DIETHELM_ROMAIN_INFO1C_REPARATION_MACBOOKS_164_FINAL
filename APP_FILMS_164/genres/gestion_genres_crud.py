@@ -102,12 +102,15 @@ def genres_ajouter_wtf():
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                name_genre_wtf = form.nom_genre_wtf.data
-                name_genre = name_genre_wtf.lower()
-                valeurs_insertion_dictionnaire = {"designation_ecran": name_genre}
+                id_ecran_wtf = form.id_ecran_wtf.data["id Écran"]
+                prix_achat_ecran_wtf = form.prix_achat_ecran_wtf.data["Prix Écran"]
+                valeurs_insertion_dictionnaire = {"designation_ecran": id_ecran_wtf,
+                                                  "prix_achat_ecran": prix_achat_ecran_wtf}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_ecran = """INSERT INTO t_ecran (id_ecran,designation_ecran) VALUES (NULL,%(designation_ecran)s) """
+                strsql_insert_ecran = """INSERT INTO t_ecran (designation_ecran,prix_achat_ecran) VALUES 
+                                                                (NULL,%(designation_ecran)s,%(prix_achat_ecran)s """
+
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_ecran, valeurs_insertion_dictionnaire)
 
