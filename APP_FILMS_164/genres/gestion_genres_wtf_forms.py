@@ -15,7 +15,7 @@ class FormWTFAjouterGenres(FlaskForm):
         Dans le formulaire "genres_ajouter_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    id_ecran_regexp = "^([A-Z]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
+    id_ecran_regexp = "^.$"
     id_ecran_wtf = StringField("Saisir modèle écran", validators=[Length(min=2, max=40, message="min 2 max 40"),
                                                                    Regexp(id_ecran_regexp,
                                                                           message="Pas de chiffres, de caractères "
@@ -23,9 +23,17 @@ class FormWTFAjouterGenres(FlaskForm):
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
+    designation_ecran_regexp = "^.$"
+    designation_ecran_wtf = StringField("Saisir désignation écran", validators=[Length(min=2, max=40, message="min 2 max 40"),
+                                                                  Regexp(id_ecran_regexp,
+                                                                         message="Pas de chiffres, de caractères "
+                                                                                 "spéciaux, "
+                                                                                 "d'espace à double, de double "
+                                                                                 "apostrophe, de double trait union")
+                                                                  ])
 
     prix_achat_ecran_regexp = "^([0-9]|[a-zÀ-ÖØ-öø-ÿ])[A-Za-zÀ-ÖØ-öø-ÿ]*['\- ]?[A-Za-zÀ-ÖØ-öø-ÿ]+$"
-    prix_achat_ecran_wtf = StringField("Saisir modèle écran", validators=[Length(min=2, max=20, message="min 2 max 20"),
+    prix_achat_ecran_wtf = StringField("Saisir le prix d'achat", validators=[Length(min=2, max=20, message="min 2 max 20"),
                                                                    Regexp(prix_achat_ecran_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
