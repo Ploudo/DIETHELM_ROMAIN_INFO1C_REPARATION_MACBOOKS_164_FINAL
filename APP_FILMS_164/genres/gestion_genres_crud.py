@@ -110,7 +110,7 @@ def genres_ajouter_wtf():
                                                   "prix_achat_ecran": prix_achat_ecran_wtf}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_ecran = """INSERT INTO t_ecran (id_ecran,designation_ecran,prix_achat_ecran) VALUES 
+                strsql_insert_ecran = """INSERT INTO t_ecran (designation_ecran,prix_achat_ecran) VALUES 
                                                                 (NULL,%(designation_ecran)s,%(prix_achat_ecran)s """
 
                 with DBconnection() as mconn_bd:
@@ -162,18 +162,18 @@ def genre_update_wtf():
         if form_update.validate_on_submit():
             # Récupèrer la valeur du champ depuis "genre_update_wtf.html" après avoir cliqué sur "SUBMIT".
             # Puis la convertir en lettres minuscules.
-            name_genre_update = form_update.nom_genre_update_wtf.data
-            name_genre_update = name_genre_update.lower()
-            date_genre_essai = form_update.date_genre_wtf_essai.data
+            designation_ecran_update = form_update.designation_ecran_update_wtf.data
+            designation_ecran_update = designation_ecran_update.lower()
+            prix_achat_ecran_update = form_update.prix_achat_ecran_update_wtf.data
 
-            valeur_update_dictionnaire = {"value_id_genre": id_genre_update,
-                                          "value_name_genre": name_genre_update,
-                                          "value_date_genre_essai": date_genre_essai
+            valeur_update_dictionnaire = {"value_id_ecran": id_ecran_update,
+                                          "value_designation_ecran": designation_ecran_update,
+                                          "value_prix_achat_ecran": prix_achat_ecran_update
                                           }
             print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
 
-            str_sql_update_intitulegenre = """UPDATE t_ecran SET designation_ecran = %(value_name_genre)s, 
-            date_ins_genre = %(value_date_genre_essai)s WHERE id_ecran = %(value_id_genre)s """
+            str_sql_update_intitulegenre = """UPDATE t_ecran SET designation_ecran = %(value_designation_ecran)s, 
+            prix_achat_ecran = %(value_prix_achat_ecran)s WHERE prix_achat_ecran = %(value_id_ecran)s """
             with DBconnection() as mconn_bd:
                 mconn_bd.execute(str_sql_update_intitulegenre, valeur_update_dictionnaire)
 
@@ -185,7 +185,7 @@ def genre_update_wtf():
             return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=id_genre_update))
         elif request.method == "GET":
             # Opération sur la BD pour récupérer "id_ecran" et "designation_ecran" de la "t_ecran"
-            str_sql_id_genre = "SELECT id_ecran, designation_ecran, date_ins_genre FROM t_ecran " \
+            str_sql_id_genre = "SELECT id_ecran, designation_ecran, prix_achat_ecran FROM t_ecran " \
                                "WHERE id_ecran = %(value_id_genre)s"
             valeur_select_dictionnaire = {"value_id_genre": id_genre_update}
             with DBconnection() as mybd_conn:
@@ -196,8 +196,8 @@ def genre_update_wtf():
                   data_nom_genre["designation_ecran"])
 
             # Afficher la valeur sélectionnée dans les champs du formulaire "genre_update_wtf.html"
-            form_update.nom_genre_update_wtf.data = data_nom_genre["designation_ecran"]
-            form_update.date_genre_wtf_essai.data = data_nom_genre["date_ins_genre"]
+            form_update.designation_ecran_update_wtf.data = data_nom_genre["designation_ecran"]
+            form_update.prix_achat_ecran_update_wtf.data = data_nom_genre["prix_achat_ecran_update"]
 
     except Exception as Exception_genre_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
