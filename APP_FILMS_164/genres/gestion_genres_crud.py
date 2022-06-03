@@ -186,8 +186,8 @@ def genre_update_wtf():
         elif request.method == "GET":
             # Opération sur la BD pour récupérer "id_ecran" et "designation_ecran" de la "t_ecran"
             str_sql_id_genre = "SELECT id_ecran, designation_ecran, prix_achat_ecran FROM t_ecran " \
-                               "WHERE id_ecran = %(value_id_genre)s"
-            valeur_select_dictionnaire = {"value_id_genre": id_genre_update}
+                               "WHERE id_ecran = %(value_id_ecran)s"
+            valeur_select_dictionnaire = {"value_id_ecran": id_genre_update}
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_id_genre, valeur_select_dictionnaire)
             # Une seule valeur est suffisante "fetchone()", vu qu'il n'y a qu'un seul champ "nom genre" pour l'UPDATE
@@ -227,7 +227,7 @@ def genre_delete_wtf():
     data_films_attribue_genre_delete = None
     btn_submit_del = None
     # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_ecran"
-    id_genre_delete = request.values['id_genre_btn_delete_html']
+    id_ecran_delete = request.values['id_genre_btn_delete_html']
 
     # Objet formulaire pour effacer le genre sélectionné.
     form_delete = FormWTFDeleteGenre()
@@ -244,38 +244,38 @@ def genre_delete_wtf():
                 data_films_attribue_genre_delete = session['data_films_attribue_genre_delete']
                 print("data_films_attribue_genre_delete ", data_films_attribue_genre_delete)
 
-                flash(f"Effacer le genre de façon définitive de la BD !!!", "danger")
+                flash(f"Effacer l'écran de façon définitive de la BD !!!", "danger")
                 # L'utilisateur vient de cliquer sur le bouton de confirmation pour effacer...
-                # On affiche le bouton "Effacer genre" qui va irrémédiablement EFFACER le genre
+                # On affiche le bouton "Effacer ecran" qui va irrémédiablement EFFACER le genre
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
-                valeur_delete_dictionnaire = {"value_id_genre": id_genre_delete}
+                valeur_delete_dictionnaire = {"value_id_ecran": id_ecran_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
-                str_sql_delete_films_genre = """DELETE FROM t_genre_film WHERE fk_genre = %(value_id_genre)s"""
-                str_sql_delete_idgenre = """DELETE FROM t_ecran WHERE id_ecran = %(value_id_genre)s"""
+                str_sql_delete_films_genre = """DELETE FROM t_macbook WHERE fk_ecran = %(value_id_ecran)s"""
+                str_sql_delete_idgenre = """DELETE FROM t_ecran WHERE id_ecran = %(value_id_ecran)s"""
                 # Manière brutale d'effacer d'abord la "fk_genre", même si elle n'existe pas dans la "t_genre_film"
                 # Ensuite on peut effacer le genre vu qu'il n'est plus "lié" (INNODB) dans la "t_genre_film"
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(str_sql_delete_films_genre, valeur_delete_dictionnaire)
                     mconn_bd.execute(str_sql_delete_idgenre, valeur_delete_dictionnaire)
 
-                flash(f"Genre définitivement effacé !!", "success")
-                print(f"Genre définitivement effacé !!")
+                flash(f"Écran définitivement effacé !!", "success")
+                print(f"Écran définitivement effacé !!")
 
                 # afficher les données
                 return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=0))
 
         if request.method == "GET":
-            valeur_select_dictionnaire = {"value_id_genre": id_genre_delete}
-            print(id_genre_delete, type(id_genre_delete))
+            valeur_select_dictionnaire = {"value_id_ecran": id_ecran_delete}
+            print(id_ecran_delete, type(id_ecran_delete))
 
             # Requête qui affiche tous les films_genres qui ont le genre que l'utilisateur veut effacer
-            str_sql_genres_films_delete = """SELECT id_genre_film, nom_film, id_ecran, designation_ecran FROM t_genre_film 
+            str_sql_genres_films_delete = """SELECT id_macbook, identifiant_macbook, fk_ecran FROM t_macbook 
                                             INNER JOIN t_film ON t_genre_film.fk_film = t_film.id_film
                                             INNER JOIN t_ecran ON t_genre_film.fk_genre = t_ecran.id_ecran
-                                            WHERE fk_genre = %(value_id_genre)s"""
+                                            WHERE fk_ecran = %(value_id_ecran)s"""
 
             with DBconnection() as mydb_conn:
                 mydb_conn.execute(str_sql_genres_films_delete, valeur_select_dictionnaire)
@@ -287,7 +287,7 @@ def genre_delete_wtf():
                 session['data_films_attribue_genre_delete'] = data_films_attribue_genre_delete
 
                 # Opération sur la BD pour récupérer "id_ecran" et "designation_ecran" de la "t_ecran"
-                str_sql_id_genre = "SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre)s"
+                str_sql_id_genre = "SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran = %(value_id_ecran)s"
 
                 mydb_conn.execute(str_sql_id_genre, valeur_select_dictionnaire)
                 # Une seule valeur est suffisante "fetchone()",
