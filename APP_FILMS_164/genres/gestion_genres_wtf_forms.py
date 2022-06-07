@@ -15,7 +15,7 @@ class FormWTFAjouterGenres(FlaskForm):
         Dans le formulaire "genres_ajouter_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    id_ecran_regexp = "^.{0,50}$"
+    id_ecran_regexp = "^.*$"
     id_ecran_wtf = StringField("Saisir id écran", validators=[Length(max=50, message="max 50"),
                                                                    Regexp(id_ecran_regexp,
                                                                           message="Pas de caractères, caractères "
@@ -23,7 +23,7 @@ class FormWTFAjouterGenres(FlaskForm):
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
-    designation_ecran_regexp = "^.{1,50}$"
+    designation_ecran_regexp = "^.*$"
     designation_ecran_wtf = StringField("Saisir désignation écran", validators=[Length(min=2, max=50, message="min 2 max 50"),
                                                                   Regexp(designation_ecran_regexp,
                                                                          message="Pas de chiffres, de caractères "
@@ -32,7 +32,7 @@ class FormWTFAjouterGenres(FlaskForm):
                                                                                  "apostrophe, de double trait union")
                                                                   ])
 
-    prix_achat_ecran_regexp = "^.{1,50}$"
+    prix_achat_ecran_regexp = "^.*$"
     prix_achat_ecran_wtf = StringField("Saisir le prix d'achat", validators=[Length(min=2, max=50, message="min 2 max 50"),
                                                                    Regexp(prix_achat_ecran_regexp,
                                                                           message="Pas de chiffres, de caractères "
@@ -48,7 +48,7 @@ class FormWTFUpdateGenre(FlaskForm):
         Dans le formulaire "genre_update_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    designation_ecran_update_regexp = "^.{1,50}$"
+    designation_ecran_update_regexp = ""
     designation_ecran_update_wtf = StringField("Saisir désignation écran ", validators=[Length(min=1, max=50, message="min 1 max 50"),
                                                                           Regexp(designation_ecran_update_regexp,
                                                                                  message="Pas de chiffres, de "
@@ -58,7 +58,7 @@ class FormWTFUpdateGenre(FlaskForm):
                                                                                          "apostrophe, de double trait "
                                                                                          "union")
                                                                           ])
-    prix_achat_ecran_update_regexp = "^.{1,50}$"
+    prix_achat_ecran_update_regexp = ""
     prix_achat_ecran_update_wtf = StringField("Saisir désignation écran ", validators=[Length(min=1, max=50, message="min 1 max 50"),
                                                                           Regexp(prix_achat_ecran_update_regexp,
                                                                                  message="Pas de chiffres, de "
@@ -81,7 +81,7 @@ class FormWTFDeleteGenre(FlaskForm):
         submit_btn_conf_del : Bouton de confirmation pour effacer un "genre".
         submit_btn_annuler : Bouton qui permet d'afficher la table "t_ecran".
     """
-    nom_genre_delete_wtf = StringField("Effacer ce genre")
-    submit_btn_del = SubmitField("Effacer genre")
-    submit_btn_conf_del = SubmitField("Etes-vous sur d'effacer ?")
+    nom_genre_delete_wtf = StringField("Effacer cet écran")
+    submit_btn_del = SubmitField("Effacer écran")
+    submit_btn_conf_del = SubmitField("Êtes-vous sur d'effacer ?")
     submit_btn_annuler = SubmitField("Annuler")

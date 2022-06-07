@@ -1,21 +1,18 @@
-{% extends "base.html" %}
-{% block title %} Homepage erreur 404 {% endblock %}
-{% block body %}
-<div class="container">
-	<div class="row">
-		<div class="col-md-12">
-			<h3>
-				 erreur 404
-			</h3>
-			<main class="site-content">
-				<p>
-					404 Not Found<br>
-					Le serveur n'a pas trouvé la ressource demandée. Ce code de réponse est principalement connu pour son apparition fréquente sur le web.<br>
-					Pour encore plus de codes d'erreurs...<br>
-					<a href="https://developer.mozilla.org/fr/docs/Web/HTTP/Status" target="_blank">https://developer.mozilla.org/fr/docs/Web/HTTP/Status</a>
-				</p>
-			</main>
-		</div>
-	</div>
-</div>
-{% endblock %}
+<head>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section class="notFound">
+        <div class="img">
+        <img src="https://assets.codepen.io/5647096/backToTheHomepage.png" alt="Back to the Homepage"/>
+        <img src="https://assets.codepen.io/5647096/Delorean.png" alt="El Delorean, El Doc y Marti McFly"/>
+        </div>
+        <div class="text">
+        <h1>404</h1>
+        <h2>PAGE NOT FOUND</h2>
+        <h3>BACK TO HOME?</h3>
+        <a href="#" class="yes">YES</a>
+        <a href="https://www.youtube.com/watch?v=G3AfIvJBcGo">NO</a>
+        </div>
+    </section>
+</body>
