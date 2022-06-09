@@ -110,9 +110,9 @@ def genres_ajouter_wtf():
                                                   "prix_achat_ecran": prix_achat_ecran_wtf}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                strsql_insert_ecran = """INSERT INTO t_ecran (designation_ecran,prix_achat_ecran) VALUES 
-                                                                (NULL,%(designation_ecran)s,%(prix_achat_ecran)s """
-
+                #strsql_insert_ecran = """INSERT INTO t_ecran (designation_ecran,prix_achat_ecran) VALUES
+                 #                                               (%(designation_ecran)s,%(prix_achat_ecran)s """
+                strsql_insert_ecran = """INSERT INTO `t_ecran` (`id_ecran`, `designation_ecran`, `prix_achat_ecran`, `prix_vente_ecran`, `url_ecran`, `fk_taille_ecran`) VALUES (NULL, 'hghjgj', '555', '666', 'hjgjg', '2');"""
                 with DBconnection() as mconn_bd:
                     mconn_bd.execute(strsql_insert_ecran, valeurs_insertion_dictionnaire)
 
@@ -273,8 +273,8 @@ def genre_delete_wtf():
 
             # Requête qui affiche tous les films_genres qui ont le genre que l'utilisateur veut effacer
             str_sql_genres_films_delete = """SELECT id_macbook, identifiant_macbook, fk_ecran FROM t_macbook 
-                                            INNER JOIN t_film ON t_genre_film.fk_film = t_film.id_film
-                                            INNER JOIN t_ecran ON t_genre_film.fk_genre = t_ecran.id_ecran
+                                            INNER JOIN t_macbook ON t_genre_film.fk_film = t_macbook.id_macbook
+                                            INNER JOIN t_ecran ON t_ecran_macbook.fk_genre = t_ecran.id_ecran
                                             WHERE fk_ecran = %(value_id_ecran)s"""
 
             with DBconnection() as mydb_conn:

@@ -6,6 +6,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField
 from wtforms import SubmitField
+from wtforms import IntegerField
 from wtforms.validators import Length, InputRequired, DataRequired
 from wtforms.validators import Regexp
 
@@ -33,7 +34,7 @@ class FormWTFAjouterGenres(FlaskForm):
                                                                   ])
 
     prix_achat_ecran_regexp = "^.*$"
-    prix_achat_ecran_wtf = StringField("Saisir le prix d'achat", validators=[Length(min=2, max=50, message="min 2 max 50"),
+    prix_achat_ecran_wtf = IntegerField("Saisir le prix d'achat", validators=[Length(min=2, max=50, message="min 2 max 50"),
                                                                    Regexp(prix_achat_ecran_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
