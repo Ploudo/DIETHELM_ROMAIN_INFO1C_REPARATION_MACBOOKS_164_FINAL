@@ -1,6 +1,6 @@
 """Gestion des "routes" FLASK et des données pour les genres.
 Fichier : gestion_genres_crud.py
-Auteur : OM 2021.03.22
+Auteur : OM 2021.03.16
 """
 from pathlib import Path
 
@@ -23,49 +23,48 @@ from APP_FILMS_164.genres.gestion_genres_wtf_forms import FormWTFUpdateGenre
     Test : ex : http://127.0.0.1:5005/genres_afficher
     
     Paramètres : order_by : ASC : Ascendant, DESC : Descendant
-                id_genre_sel = 0 >> tous les genres.
-                id_genre_sel = "n" affiche le genre dont l'id est "n"
+                id_ecran = 0 >> tous les genres.
+                id_ecran = "n" affiche le genre dont l'id est "n"
 """
 
 
-@app.route("/genres_afficher/<string:order_by>/<int:id_genre_sel>", methods=['GET', 'POST'])
-def genres_afficher(order_by, id_genre_sel):
+@app.route("/genres_afficher/<string:order_by>/<int:id_ecran>", methods=['GET', 'POST'])
+def genres_afficher(order_by, id_ecran):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
-                if order_by == "ASC" and id_genre_sel == 0:
-                    strsql_ecran_afficher = """SELECT * from t_ecran"""
-                    mc_afficher.execute(strsql_ecran_afficher)
+                if order_by == "ASC" and id_ecran == 0:
+                    strsql_genres_afficher = """SELECT id_ecran, designation_ecran FROM t_ecran ORDER BY id_ecran ASC"""
+                    mc_afficher.execute(strsql_genres_afficher)
                 elif order_by == "ASC":
-                    "SELECT * FROM t_ecran"
                     # C'EST LA QUE VOUS ALLEZ DEVOIR PLACER VOTRE PROPRE LOGIQUE MySql
-                    # la commande MySql classique est "SELECT * FROM t_xxxxx"
+                    # la commande MySql classique est "SELECT * FROM t_ecran"
                     # Pour "lever"(raise) une erreur s'il y a des erreurs sur les noms d'attributs dans la table
                     # donc, je précise les champs à afficher
                     # Constitution d'un dictionnaire pour associer l'id du genre sélectionné avec un nom de variable
-                    valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_genre_sel}
-                    strsql_ecran_afficher = """SELECT id_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre_selected)s"""
+                    valeur_id_genre_selected_dictionnaire = {"value_id_genre_selected": id_ecran}
+                    strsql_genres_afficher = """SELECT id_ecran, designation_ecran  FROM t_ecran WHERE id_ecran """
 
-                    mc_afficher.execute(strsql_ecran_afficher, valeur_id_genre_selected_dictionnaire)
+                    mc_afficher.execute(strsql_genres_afficher, valeur_id_genre_selected_dictionnaire)
                 else:
-                    strsql_ecran_afficher = """SELECT id_ecran"""
+                    strsql_genres_afficher = """SELECT id_ecran, designation_ecran  FROM t_ecran ORDER BY id_ecran DESC"""
 
-                    mc_afficher.execute(strsql_ecran_afficher)
+                    mc_afficher.execute(strsql_genres_afficher)
 
                 data_genres = mc_afficher.fetchall()
 
-                print("data_ecrans ", data_genres, " Type : ", type(data_genres))
+                print("data_genres ", data_genres, " Type : ", type(data_genres))
 
                 # Différencier les messages si la table est vide.
-                if not data_genres and id_genre_sel == 0:
+                if not data_genres and id_ecran == 0:
                     flash("""La table "t_ecran" est vide. !!""", "warning")
-                elif not data_genres and id_genre_sel > 0:
+                elif not data_genres and id_ecran > 0:
                     # Si l'utilisateur change l'id_ecran dans l'URL et que le genre n'existe pas,
-                    flash(f"Le genre demandé n'existe pas !!", "warning")
+                    flash(f"L'écran demandé n'existe pas !!", "warning")
                 else:
                     # Dans tous les autres cas, c'est que la table "t_ecran" est vide.
                     # OM 2020.04.09 La ligne ci-dessous permet de donner un sentiment rassurant aux utilisateurs.
-                    flash(f"Données genres affichés !!", "success")
+                    flash(f"Données écrans affichés !!", "success")
 
         except Exception as Exception_genres_afficher:
             raise ExceptionGenresAfficher(f"fichier : {Path(__file__).name}  ;  "
@@ -102,25 +101,20 @@ def genres_ajouter_wtf():
     if request.method == "POST":
         try:
             if form.validate_on_submit():
-                id_ecran_wtf = form.id_ecran_wtf.data["id Écran"]
-                prix_achat_ecran_wtf = form.prix_achat_ecran_wtf.data["Prix Écran"]
-                designation_ecran_wtf = form.designation_ecran_wtf.data["Désignation Écran"]
-                valeurs_insertion_dictionnaire = {"id_ecran": id_ecran_wtf,
-                                                  "désignation_ecran": designation_ecran_wtf,
-                                                  "prix_achat_ecran": prix_achat_ecran_wtf}
+                name_genre_wtf = form.nom_genre_wtf.data
+                name_genre = name_genre_wtf.lower()
+                valeurs_insertion_dictionnaire = {"value_intitule_genre": name_genre}
                 print("valeurs_insertion_dictionnaire ", valeurs_insertion_dictionnaire)
 
-                #strsql_insert_ecran = """INSERT INTO t_ecran (designation_ecran,prix_achat_ecran) VALUES
-                 #                                               (%(designation_ecran)s,%(prix_achat_ecran)s """
-                strsql_insert_ecran = """INSERT INTO `t_ecran` (`id_ecran`, `designation_ecran`, `prix_achat_ecran`, `prix_vente_ecran`, `url_ecran`, `fk_taille_ecran`) VALUES (NULL, 'hghjgj', '555', '666', 'hjgjg', '2');"""
+                strsql_insert_genre = """INSERT INTO t_ecran (id_ecran,designation_ecran) VALUES (NULL,%(value_intitule_genre)s) """
                 with DBconnection() as mconn_bd:
-                    mconn_bd.execute(strsql_insert_ecran, valeurs_insertion_dictionnaire)
+                    mconn_bd.execute(strsql_insert_genre, valeurs_insertion_dictionnaire)
 
                 flash(f"Données insérées !!", "success")
                 print(f"Données insérées !!")
 
                 # Pour afficher et constater l'insertion de la valeur, on affiche en ordre inverse. (DESC)
-                return redirect(url_for('genres_afficher', order_by='DESC', id_genre_sel=0))
+                return redirect(url_for('genres_afficher', order_by='DESC', id_ecran=0))
 
         except Exception as Exception_genres_ajouter_wtf:
             raise ExceptionGenresAjouterWtf(f"fichier : {Path(__file__).name}  ;  "
@@ -162,18 +156,14 @@ def genre_update_wtf():
         if form_update.validate_on_submit():
             # Récupèrer la valeur du champ depuis "genre_update_wtf.html" après avoir cliqué sur "SUBMIT".
             # Puis la convertir en lettres minuscules.
-            designation_ecran_update = form_update.designation_ecran_update_wtf.data
-            designation_ecran_update = designation_ecran_update.lower()
-            prix_achat_ecran_update = form_update.prix_achat_ecran_update_wtf.data
+            name_genre_update = form_update.nom_genre_update_wtf.data
 
-            valeur_update_dictionnaire = {"value_id_ecran": id_ecran_update,
-                                          "value_designation_ecran": designation_ecran_update,
-                                          "value_prix_achat_ecran": prix_achat_ecran_update
+            valeur_update_dictionnaire = {"value_id_genre": id_genre_update,
+                                          "value_name_genre": name_genre_update,
                                           }
             print("valeur_update_dictionnaire ", valeur_update_dictionnaire)
 
-            str_sql_update_intitulegenre = """UPDATE t_ecran SET designation_ecran = %(value_designation_ecran)s, 
-            prix_achat_ecran = %(value_prix_achat_ecran)s WHERE prix_achat_ecran = %(value_id_ecran)s """
+            str_sql_update_intitulegenre = """UPDATE t_ecran SET designation_ecran = %(value_name_genre)s WHERE id_ecran = %(value_id_genre)s """
             with DBconnection() as mconn_bd:
                 mconn_bd.execute(str_sql_update_intitulegenre, valeur_update_dictionnaire)
 
@@ -182,12 +172,12 @@ def genre_update_wtf():
 
             # afficher et constater que la donnée est mise à jour.
             # Affiche seulement la valeur modifiée, "ASC" et l'"id_genre_update"
-            return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=id_genre_update))
+            return redirect(url_for('genres_afficher', order_by="ASC", id_ecran=id_genre_update))
         elif request.method == "GET":
             # Opération sur la BD pour récupérer "id_ecran" et "designation_ecran" de la "t_ecran"
-            str_sql_id_genre = "SELECT id_ecran, designation_ecran, prix_achat_ecran FROM t_ecran " \
-                               "WHERE id_ecran = %(value_id_ecran)s"
-            valeur_select_dictionnaire = {"value_id_ecran": id_genre_update}
+            str_sql_id_genre = "SELECT id_ecran, designation_ecran FROM t_ecran " \
+                               "WHERE id_ecran = %(value_id_genre)s"
+            valeur_select_dictionnaire = {"value_id_genre": id_genre_update}
             with DBconnection() as mybd_conn:
                 mybd_conn.execute(str_sql_id_genre, valeur_select_dictionnaire)
             # Une seule valeur est suffisante "fetchone()", vu qu'il n'y a qu'un seul champ "nom genre" pour l'UPDATE
@@ -196,8 +186,7 @@ def genre_update_wtf():
                   data_nom_genre["designation_ecran"])
 
             # Afficher la valeur sélectionnée dans les champs du formulaire "genre_update_wtf.html"
-            form_update.designation_ecran_update_wtf.data = data_nom_genre["designation_ecran"]
-            form_update.prix_achat_ecran_update_wtf.data = data_nom_genre["prix_achat_ecran_update"]
+            form_update.nom_genre_update_wtf.data = data_nom_genre["designation_ecran"]
 
     except Exception as Exception_genre_update_wtf:
         raise ExceptionGenreUpdateWtf(f"fichier : {Path(__file__).name}  ;  "
@@ -227,7 +216,7 @@ def genre_delete_wtf():
     data_films_attribue_genre_delete = None
     btn_submit_del = None
     # L'utilisateur vient de cliquer sur le bouton "DELETE". Récupère la valeur de "id_ecran"
-    id_ecran_delete = request.values['id_genre_btn_delete_html']
+    id_genre_delete = request.values['id_genre_btn_delete_html']
 
     # Objet formulaire pour effacer le genre sélectionné.
     form_delete = FormWTFDeleteGenre()
@@ -236,7 +225,7 @@ def genre_delete_wtf():
         if request.method == "POST" and form_delete.validate_on_submit():
 
             if form_delete.submit_btn_annuler.data:
-                return redirect(url_for("genres_afficher", order_by="ASC", id_genre_sel=0))
+                return redirect(url_for("genres_afficher", order_by="ASC", id_ecran=0))
 
             if form_delete.submit_btn_conf_del.data:
                 # Récupère les données afin d'afficher à nouveau
@@ -246,15 +235,15 @@ def genre_delete_wtf():
 
                 flash(f"Effacer l'écran de façon définitive de la BD !!!", "danger")
                 # L'utilisateur vient de cliquer sur le bouton de confirmation pour effacer...
-                # On affiche le bouton "Effacer ecran" qui va irrémédiablement EFFACER le genre
+                # On affiche le bouton "Effacer genre" qui va irrémédiablement EFFACER le genre
                 btn_submit_del = True
 
             if form_delete.submit_btn_del.data:
-                valeur_delete_dictionnaire = {"value_id_ecran": id_ecran_delete}
+                valeur_delete_dictionnaire = {"value_id_genre": id_genre_delete}
                 print("valeur_delete_dictionnaire ", valeur_delete_dictionnaire)
 
-                str_sql_delete_films_genre = """DELETE FROM t_macbook WHERE fk_ecran = %(value_id_ecran)s"""
-                str_sql_delete_idgenre = """DELETE FROM t_ecran WHERE id_ecran = %(value_id_ecran)s"""
+                str_sql_delete_films_genre = """DELETE FROM t_macbook_ecran WHERE fk_ecran = %(value_id_genre)s"""
+                str_sql_delete_idgenre = """DELETE FROM t_ecran WHERE id_ecran = %(value_id_genre)s"""
                 # Manière brutale d'effacer d'abord la "fk_genre", même si elle n'existe pas dans la "t_genre_film"
                 # Ensuite on peut effacer le genre vu qu'il n'est plus "lié" (INNODB) dans la "t_genre_film"
                 with DBconnection() as mconn_bd:
@@ -265,17 +254,17 @@ def genre_delete_wtf():
                 print(f"Écran définitivement effacé !!")
 
                 # afficher les données
-                return redirect(url_for('genres_afficher', order_by="ASC", id_genre_sel=0))
+                return redirect(url_for('genres_afficher', order_by="ASC", id_ecran=0))
 
         if request.method == "GET":
-            valeur_select_dictionnaire = {"value_id_ecran": id_ecran_delete}
-            print(id_ecran_delete, type(id_ecran_delete))
+            valeur_select_dictionnaire = {"value_id_genre": id_genre_delete}
+            print(id_genre_delete, type(id_genre_delete))
 
             # Requête qui affiche tous les films_genres qui ont le genre que l'utilisateur veut effacer
-            str_sql_genres_films_delete = """SELECT id_macbook, identifiant_macbook, fk_ecran FROM t_macbook 
-                                            INNER JOIN t_macbook ON t_genre_film.fk_film = t_macbook.id_macbook
-                                            INNER JOIN t_ecran ON t_ecran_macbook.fk_genre = t_ecran.id_ecran
-                                            WHERE fk_ecran = %(value_id_ecran)s"""
+            str_sql_genres_films_delete = """SELECT id_macbook_ecran, identifiant_macbook, id_ecran, designation_ecran FROM t_macbook_ecran 
+                                            INNER JOIN t_macbook ON t_macbook_ecran.fk_macbook = t_macbook.id_macbook
+                                            INNER JOIN t_ecran ON t_macbook_ecran.fk_ecran = t_ecran.id_ecran
+                                            WHERE fk_ecran = %(value_id_genre)s"""
 
             with DBconnection() as mydb_conn:
                 mydb_conn.execute(str_sql_genres_films_delete, valeur_select_dictionnaire)
@@ -287,7 +276,7 @@ def genre_delete_wtf():
                 session['data_films_attribue_genre_delete'] = data_films_attribue_genre_delete
 
                 # Opération sur la BD pour récupérer "id_ecran" et "designation_ecran" de la "t_ecran"
-                str_sql_id_genre = "SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran = %(value_id_ecran)s"
+                str_sql_id_genre = "SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran = %(value_id_genre)s"
 
                 mydb_conn.execute(str_sql_id_genre, valeur_select_dictionnaire)
                 # Une seule valeur est suffisante "fetchone()",

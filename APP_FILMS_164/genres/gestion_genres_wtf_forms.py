@@ -5,8 +5,8 @@
 """
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField
+
 from wtforms import SubmitField
-from wtforms import IntegerField
 from wtforms.validators import Length, InputRequired, DataRequired
 from wtforms.validators import Regexp
 
@@ -16,32 +16,15 @@ class FormWTFAjouterGenres(FlaskForm):
         Dans le formulaire "genres_ajouter_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    id_ecran_regexp = "^.*$"
-    id_ecran_wtf = StringField("Saisir id écran", validators=[Length(max=50, message="max 50"),
-                                                                   Regexp(id_ecran_regexp,
-                                                                          message="Pas de caractères, caractères "
-                                                                                  "spéciaux, "
-                                                                                  "d'espace à double, de double "
-                                                                                  "apostrophe, de double trait union")
-                                                                   ])
-    designation_ecran_regexp = "^.*$"
-    designation_ecran_wtf = StringField("Saisir désignation écran", validators=[Length(min=2, max=50, message="min 2 max 50"),
-                                                                  Regexp(designation_ecran_regexp,
-                                                                         message="Pas de chiffres, de caractères "
-                                                                                 "spéciaux, "
-                                                                                 "d'espace à double, de double "
-                                                                                 "apostrophe, de double trait union")
-                                                                  ])
-
-    prix_achat_ecran_regexp = "^.*$"
-    prix_achat_ecran_wtf = IntegerField("Saisir le prix d'achat", validators=[Length(min=2, max=50, message="min 2 max 50"),
-                                                                   Regexp(prix_achat_ecran_regexp,
+    nom_genre_regexp = ""
+    nom_genre_wtf = StringField("Saisir l'écran ", validators=[Length(min=2, max=50, message="min 2 max 50"),
+                                                                   Regexp(nom_genre_regexp,
                                                                           message="Pas de chiffres, de caractères "
                                                                                   "spéciaux, "
                                                                                   "d'espace à double, de double "
                                                                                   "apostrophe, de double trait union")
                                                                    ])
-    submit = SubmitField("Enregistrer")
+    submit = SubmitField("Enregistrer écran")
 
 
 class FormWTFUpdateGenre(FlaskForm):
@@ -49,9 +32,9 @@ class FormWTFUpdateGenre(FlaskForm):
         Dans le formulaire "genre_update_wtf.html" on impose que le champ soit rempli.
         Définition d'un "bouton" submit avec un libellé personnalisé.
     """
-    designation_ecran_update_regexp = ""
-    designation_ecran_update_wtf = StringField("Saisir désignation écran ", validators=[Length(min=1, max=50, message="min 1 max 50"),
-                                                                          Regexp(designation_ecran_update_regexp,
+    nom_genre_update_regexp = ""
+    nom_genre_update_wtf = StringField("Saisir l'écran ", validators=[Length(min=2, max=70, message="min 2 max 70"),
+                                                                          Regexp(nom_genre_update_regexp,
                                                                                  message="Pas de chiffres, de "
                                                                                          "caractères "
                                                                                          "spéciaux, "
@@ -59,18 +42,9 @@ class FormWTFUpdateGenre(FlaskForm):
                                                                                          "apostrophe, de double trait "
                                                                                          "union")
                                                                           ])
-    prix_achat_ecran_update_regexp = ""
-    prix_achat_ecran_update_wtf = StringField("Saisir désignation écran ", validators=[Length(min=1, max=50, message="min 1 max 50"),
-                                                                          Regexp(prix_achat_ecran_update_regexp,
-                                                                                 message="Pas de chiffres, de "
-                                                                                         "caractères "
-                                                                                         "spéciaux, "
-                                                                                         "d'espace à double, de double "
-                                                                                         "apostrophe, de double trait "
-                                                                                         "union")
-                                                                          ])
-
-    submit = SubmitField("Update genre")
+    # date_genre_wtf_essai = DateField("Essai date", validators=[InputRequired("Date obligatoire"),
+    #                                                            DataRequired("Date non valide")])
+    submit = SubmitField("Update écran")
 
 
 class FormWTFDeleteGenre(FlaskForm):

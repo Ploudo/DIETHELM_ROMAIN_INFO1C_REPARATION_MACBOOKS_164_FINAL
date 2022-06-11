@@ -9,7 +9,7 @@ try:
     """
         Une seule requête pour montrer la récupération des données de la BD en MySql.
     """
-    strsql_genres_afficher = """SELECT * FROM t_modele_motherboard"""
+    strsql_genres_afficher = """SELECT id_ecran, designation_ecran FROM t_ecran ORDER BY id_ecran ASC"""
 
     with DBconnection() as db:
         db.execute(strsql_genres_afficher)

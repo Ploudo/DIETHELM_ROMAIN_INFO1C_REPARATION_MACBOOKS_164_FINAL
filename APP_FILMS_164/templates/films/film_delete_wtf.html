@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %} Effacer un FILM (WTF) {% endblock %}
+{% block title %} Effacer une MacBook (WTF) {% endblock %}
 {% block body %}
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
 			<p>
-				Effacer un FILM
+				Effacer une MacBook
 			</p>
 			<table class="table table-responsive-sm">
 				{% if data_film_del %}
@@ -42,7 +42,7 @@
 						{{ row.nom_film }}
 					</th>
 					<th class="align-middle">
-						{{ row.duree_film|default("", True) }}
+						{{ row.fk_annee|default("", True) }}
 					</th>
 					<th class="align-middle">
 						{{ row.date_sortie_film|default("", True) }}

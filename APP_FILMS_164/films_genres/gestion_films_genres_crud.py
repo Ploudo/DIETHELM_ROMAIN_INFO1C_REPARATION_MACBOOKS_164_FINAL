@@ -20,8 +20,8 @@ from APP_FILMS_164.erreurs.exceptions import *
     
     But : Afficher les films avec les genres associés pour chaque film.
     
-    Paramètres : id_genre_sel = 0 >> tous les films.
-                 id_genre_sel = "n" affiche le film dont l'id est "n"
+    Paramètres : id_genre_sel = 0 >> tous les MacBooks.
+                 id_genre_sel = "n" affiche le MacBook dont l'id est "n"
                  
 """
 
@@ -32,11 +32,13 @@ def films_genres_afficher(id_film_sel):
     if request.method == "GET":
         try:
             with DBconnection() as mc_afficher:
-                strsql_genres_films_afficher_data = """SELECT id_film, nom_film, duree_film, description_film, cover_link_film, date_sortie_film,
-                                                            GROUP_CONCAT(designation_ecran) as GenresFilms FROM t_genre_film
-                                                            RIGHT JOIN t_film ON t_film.id_film = t_genre_film.fk_film
-                                                            LEFT JOIN t_ecran ON t_ecran.id_ecran = t_genre_film.fk_genre
-                                                            GROUP BY id_film"""
+                strsql_genres_films_afficher_data = """SELECT id_macbook, identifiant_macbook, fk_annee,
+                                                       GROUP_CONCAT(designation_ecran) as MacBooksEcrans FROM t_macbook_ecran
+                                                       INNER JOIN t_macbook ON t_macbook.id_macbook = t_macbook_ecran.fk_macbook
+                                                       INNER JOIN t_ecran ON t_ecran.id_ecran = t_macbook_ecran.fk_ecran
+                                                       GROUP BY id_macbook"""
+
+
                 if id_film_sel == 0:
                     # le paramètre 0 permet d'afficher tous les films
                     # Sinon le paramètre représente la valeur de l'id du film
@@ -46,7 +48,7 @@ def films_genres_afficher(id_film_sel):
                     valeur_id_film_selected_dictionnaire = {"value_id_film_selected": id_film_sel}
                     # En MySql l'instruction HAVING fonctionne comme un WHERE... mais doit être associée à un GROUP BY
                     # L'opérateur += permet de concaténer une nouvelle valeur à la valeur de gauche préalablement définie.
-                    strsql_genres_films_afficher_data += """ HAVING id_film= %(value_id_film_selected)s"""
+                    strsql_genres_films_afficher_data += """ HAVING id_macbook= %(value_id_bouteille_selected)s"""
 
                     mc_afficher.execute(strsql_genres_films_afficher_data, valeur_id_film_selected_dictionnaire)
 
@@ -56,12 +58,12 @@ def films_genres_afficher(id_film_sel):
 
                 # Différencier les messages.
                 if not data_genres_films_afficher and id_film_sel == 0:
-                    flash("""La table "t_film" est vide. !""", "warning")
+                    flash("""La table "t_macbook" est vide. !""", "warning")
                 elif not data_genres_films_afficher and id_film_sel > 0:
                     # Si l'utilisateur change l'id_film dans l'URL et qu'il ne correspond à aucun film
-                    flash(f"Le film {id_film_sel} demandé n'existe pas !!", "warning")
+                    flash(f"La MacBook {id_film_sel} demandé n'existe pas !!", "warning")
                 else:
-                    flash(f"Données films et genres affichés !!", "success")
+                    flash(f"Données MACBOOKS affichés !!", "success")
 
         except Exception as Exception_films_genres_afficher:
             raise ExceptionFilmsGenresAfficher(f"fichier : {Path(__file__).name}  ;  {films_genres_afficher.__name__} ;"
@@ -79,7 +81,7 @@ def films_genres_afficher(id_film_sel):
     Récupère la liste de tous les genres du film sélectionné par le bouton "MODIFIER" de "films_genres_afficher.html"
     
     Dans une liste déroulante particulière (tags-selector-tagselect), on voit :
-    1) Tous les genres contenus dans la "t_ecran".
+    1) Tous les genres contenus dans la "t_genre".
     2) Les genres attribués au film selectionné.
     3) Les genres non-attribués au film sélectionné.
 
@@ -121,7 +123,7 @@ def edit_genre_film_selected():
                 genres_films_afficher_data(valeur_id_film_selected_dictionnaire)
 
             print(data_genre_film_selected)
-            lst_data_film_selected = [item['id_film'] for item in data_genre_film_selected]
+            lst_data_film_selected = [item['id_macbook'] for item in data_genre_film_selected]
             print("lst_data_film_selected  ", lst_data_film_selected,
                   type(lst_data_film_selected))
 
@@ -146,7 +148,7 @@ def edit_genre_film_selected():
                   type(data_genres_films_attribues))
 
             # Extrait les valeurs contenues dans la table "t_genres", colonne "designation_ecran"
-            # Le composant javascript "tagify" pour afficher les tags n'a pas besoin de l'id_ecran
+            # Le composant javascript "tagify" pour afficher les tags n'a pas besoin de l'id_genre
             lst_data_genres_films_non_attribues = [item['designation_ecran'] for item in data_genres_films_non_attribues]
             print("lst_all_genres gf_edit_genre_film_selected ", lst_data_genres_films_non_attribues,
                   type(lst_data_genres_films_non_attribues))
@@ -169,7 +171,7 @@ def edit_genre_film_selected():
     Récupère la liste de tous les genres du film sélectionné par le bouton "MODIFIER" de "films_genres_afficher.html"
     
     Dans une liste déroulante particulière (tags-selector-tagselect), on voit :
-    1) Tous les genres contenus dans la "t_ecran".
+    1) Tous les genres contenus dans la "t_genre".
     2) Les genres attribués au film selectionné.
     3) Les genres non-attribués au film sélectionné.
 
@@ -209,23 +211,23 @@ def update_genre_film_selected():
 
             # Pour apprécier la facilité de la vie en Python... "les ensembles en Python"
             # https://fr.wikibooks.org/wiki/Programmation_Python/Ensembles
-            # OM 2021.05.02 Une liste de "id_ecran" qui doivent être effacés de la table intermédiaire "t_genre_film".
+            # OM 2021.05.02 Une liste de "id_genre" qui doivent être effacés de la table intermédiaire "t_genre_film".
             lst_diff_genres_delete_b = list(set(old_lst_data_genres_films_attribues) -
                                             set(new_lst_int_genre_film_old))
             print("lst_diff_genres_delete_b ", lst_diff_genres_delete_b)
 
-            # Une liste de "id_ecran" qui doivent être ajoutés à la "t_genre_film"
+            # Une liste de "id_genre" qui doivent être ajoutés à la "t_genre_film"
             lst_diff_genres_insert_a = list(
                 set(new_lst_int_genre_film_old) - set(old_lst_data_genres_films_attribues))
             print("lst_diff_genres_insert_a ", lst_diff_genres_insert_a)
 
             # SQL pour insérer une nouvelle association entre
-            # "fk_film"/"id_film" et "fk_genre"/"id_ecran" dans la "t_genre_film"
-            strsql_insert_genre_film = """INSERT INTO t_genre_film (id_genre_film, fk_genre, fk_film)
-                                                    VALUES (NULL, %(value_fk_genre)s, %(value_fk_film)s)"""
+            # "fk_film"/"id_film" et "fk_genre"/"id_genre" dans la "t_genre_film"
+            strsql_insert_genre_film = """INSERT INTO t_macbook_ecran (id_macbook_ecran, fk_ecran, fk_macbook)
+                                                    VALUES (NULL, %(value_fk_cepage)s, %(value_fk_bouteille)s)"""
 
-            # SQL pour effacer une (des) association(s) existantes entre "id_film" et "id_ecran" dans la "t_genre_film"
-            strsql_delete_genre_film = """DELETE FROM t_genre_film WHERE fk_genre = %(value_fk_genre)s AND fk_film = %(value_fk_film)s"""
+            # SQL pour effacer une (des) association(s) existantes entre "id_film" et "id_genre" dans la "t_genre_film"
+            strsql_delete_genre_film = """DELETE FROM t_macbook_ecran WHERE fk_ecran = %(value_fk_cepage)s AND fk_macbook = %(value_fk_bouteille)s"""
 
             with DBconnection() as mconn_bd:
                 # Pour le film sélectionné, parcourir la liste des genres à INSÉRER dans la "t_genre_film".
@@ -233,8 +235,8 @@ def update_genre_film_selected():
                 for id_genre_ins in lst_diff_genres_insert_a:
                     # Constitution d'un dictionnaire pour associer l'id du film sélectionné avec un nom de variable
                     # et "id_genre_ins" (l'id du genre dans la liste) associé à une variable.
-                    valeurs_film_sel_genre_sel_dictionnaire = {"value_fk_film": id_film_selected,
-                                                               "value_fk_genre": id_genre_ins}
+                    valeurs_film_sel_genre_sel_dictionnaire = {"value_fk_bouteille": id_film_selected,
+                                                               "value_fk_cepage": id_genre_ins}
 
                     mconn_bd.execute(strsql_insert_genre_film, valeurs_film_sel_genre_sel_dictionnaire)
 
@@ -243,8 +245,8 @@ def update_genre_film_selected():
                 for id_genre_del in lst_diff_genres_delete_b:
                     # Constitution d'un dictionnaire pour associer l'id du film sélectionné avec un nom de variable
                     # et "id_genre_del" (l'id du genre dans la liste) associé à une variable.
-                    valeurs_film_sel_genre_sel_dictionnaire = {"value_fk_film": id_film_selected,
-                                                               "value_fk_genre": id_genre_del}
+                    valeurs_film_sel_genre_sel_dictionnaire = {"value_fk_bouteille": id_film_selected,
+                                                               "value_fk_cepage": id_genre_del}
 
                     # Du fait de l'utilisation des "context managers" on accède au curseur grâce au "with".
                     # la subtilité consiste à avoir une méthode "execute" dans la classe "DBconnection"
@@ -276,20 +278,20 @@ def genres_films_afficher_data(valeur_id_film_selected_dict):
     print("valeur_id_film_selected_dict...", valeur_id_film_selected_dict)
     try:
 
-        strsql_film_selected = """SELECT id_film, nom_film, duree_film, description_film, cover_link_film, date_sortie_film, GROUP_CONCAT(id_ecran) as GenresFilms FROM t_genre_film
-                                        INNER JOIN t_film ON t_film.id_film = t_genre_film.fk_film
-                                        INNER JOIN t_ecran ON t_ecran.id_ecran = t_genre_film.fk_genre
-                                        WHERE id_film = %(value_id_film_selected)s"""
+        strsql_film_selected = """SELECT id_macbook, identifiant_macbook,fk_annee, GROUP_CONCAT(id_ecran) as MacBooksEcrans FROM t_macbook_ecran
+                                        INNER JOIN t_macbook ON t_macbook.id_macbook = t_macbook_ecran.fk_macbook
+                                        INNER JOIN t_ecran ON t_ecran.id_ecran = t_macbook_ecran.fk_ecran
+                                        WHERE id_macbook = %(value_id_film_selected)s"""
 
-        strsql_genres_films_non_attribues = """SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran not in(SELECT id_ecran as idGenresFilms FROM t_genre_film
-                                                    INNER JOIN t_film ON t_film.id_film = t_genre_film.fk_film
-                                                    INNER JOIN t_ecran ON t_ecran.id_ecran = t_genre_film.fk_genre
-                                                    WHERE id_film = %(value_id_film_selected)s)"""
+        strsql_genres_films_non_attribues = """SELECT id_ecran, designation_ecran FROM t_ecran WHERE id_ecran not in(SELECT id_ecran as idGenresFilms FROM t_macbook_ecran
+                                                    INNER JOIN t_macbook ON t_macbook.id_macbook = t_macbook_ecran.fk_macbook
+                                                    INNER JOIN t_ecran ON t_ecran.id_ecran = t_macbook_ecran.fk_ecran
+                                                    WHERE id_macbook = %(value_id_film_selected)s)"""
 
-        strsql_genres_films_attribues = """SELECT id_film, id_ecran, designation_ecran FROM t_genre_film
-                                            INNER JOIN t_film ON t_film.id_film = t_genre_film.fk_film
-                                            INNER JOIN t_ecran ON t_ecran.id_ecran = t_genre_film.fk_genre
-                                            WHERE id_film = %(value_id_film_selected)s"""
+        strsql_genres_films_attribues = """SELECT id_macbook, id_ecran, designation_ecran FROM t_macbook_ecran
+                                            INNER JOIN t_macbook ON t_macbook.id_macbook = t_macbook_ecran.fk_macbook
+                                            INNER JOIN t_ecran ON t_ecran.id_ecran = t_macbook_ecran.fk_ecran
+                                            WHERE id_macbook = %(value_id_film_selected)s"""
 
         # Du fait de l'utilisation des "context managers" on accède au curseur grâce au "with".
         with DBconnection() as mc_afficher:

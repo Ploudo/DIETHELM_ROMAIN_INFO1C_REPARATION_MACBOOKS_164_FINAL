@@ -37,10 +37,10 @@
 
 			</p>
             <p>
-                Films.
+                MacBook
             </p>
             <table class="table table-responsive-sm">
-                {% if data_film_selected %}
+                {% if data_bouteille_selected %}
                     <thead>
                         <tr>
                             <th class="">
@@ -65,7 +65,7 @@
                     </thead>
             {% endif %}
 
-            {% for row in data_film_selected %}
+            {% for row in data_bouteille_selected %}
 				<tbody>
 					<tr>
 						<td class="align-middle">
@@ -75,7 +75,7 @@
 							{{ row.nom_film }}
 						</td>
 						<td class="align-middle">
-							{{ row.duree_film|default("", True) }}
+							{{ row.fk_annee|default("", True) }}
 						</td>
 						<td class="align-middle">
 							{{ row.date_sortie_film|default("", True) }}
@@ -92,7 +92,7 @@
 				<tbody>
 					<tr>
 						<td>
-							Aucun film.
+							Aucun MacBook
 						</td>
 						<td>
 							<a class="btn btn-primary" href="{{ url_for('avertissement_sympa_pour_geeks') }}" role="button">Add</a>
